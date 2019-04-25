@@ -1,7 +1,10 @@
 class SmsController < ApplicationController
   def create
     p params
-    from = params["from"]
+    from = params["From"]
+    p '======='
+    p from
+    p "-------"
     require 'rubygems'
     require 'twilio-ruby'
 
