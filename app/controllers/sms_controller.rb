@@ -17,8 +17,9 @@ class SmsController < ApplicationController
 
       message = @client.messages.create(
                                    from: '+14152124906',
-                                   body: 'Hello Nick!',
-                                   to: from
+                                   # body: 'Hello Nick!',
+                                   to: from,
+                                   media_url: 'https://s3-us-west-1.amazonaws.com/benjs-bucket/marilyn.jpg'
                                  )
 
       puts message.sid
