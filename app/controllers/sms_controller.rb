@@ -17,6 +17,13 @@ class SmsController < ApplicationController
 
       message = @client.messages.create(
                                    from: '+14152124906',
+                                   body: "Thank you for using FLASH!  I'll be sending your picture soon.",
+                                   to: from,
+                                   # media_url: 'https://s3-us-west-1.amazonaws.com/benjs-bucket/marilyn.jpg'
+                                 )
+
+      message = @client.messages.create(
+                                   from: '+14152124906',
                                    # body: 'Hello Nick!',
                                    to: from,
                                    media_url: 'https://s3-us-west-1.amazonaws.com/benjs-bucket/marilyn.jpg'
