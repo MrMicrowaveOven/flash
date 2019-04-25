@@ -1,5 +1,5 @@
 class SmsController < ApplicationController
   def create
-    render json: {"yo": "World"}
+    render json: params
   end
 end
