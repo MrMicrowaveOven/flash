@@ -27,8 +27,12 @@ class SmsController < ApplicationController
           media_url: response
         )
       elsif response.include?('camera error')
-        render json: response
-        return
+        message = @client.messages.create(
+          from: '+14152124906',
+          to: from,
+          body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
+        )
+        puts 'CAMERA ERROR'
       elsif response.include?('expired')
         message = @client.messages.create(
           from: '+14152124906',
