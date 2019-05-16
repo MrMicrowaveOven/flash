@@ -20,12 +20,27 @@ class SmsController < ApplicationController
 
       response = Net::HTTP.get('0beca4aa.ngrok.io', '/')
 
-      message = @client.messages.create(
-        from: '+14152124906',
-        to: from,
-        media_url: response
-      )
-
+      if response.index('http') == 0
+        message = @client.messages.create(
+          from: '+14152124906',
+          to: from,
+          media_url: response
+        )
+      elsif response.include?('expired')
+        message = @client.messages.create(
+          from: '+14152124906',
+          to: from,
+          body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
+        )
+        puts 'EXPIRATION ERROR'
+      else
+        message = @client.messages.create(
+          from: '+14152124906',
+          to: from,
+          body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
+        )
+        puts 'UNKNOWN ERROR'
+      end
       puts message.sid
     end
     render json: params
