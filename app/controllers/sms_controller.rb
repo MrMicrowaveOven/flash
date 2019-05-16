@@ -18,7 +18,7 @@ class SmsController < ApplicationController
         body: "Thank you for using FLASH!  I'll be sending your picture soon.",
       )
 
-      response = Net::HTTP.get('0beca4aa.ngrok.io', '/')
+      response = Net::HTTP.get('flash-chateau.ngrok.io', '/')
 
       if response.index('http') == 0
         message = @client.messages.create(
@@ -26,6 +26,9 @@ class SmsController < ApplicationController
           to: from,
           media_url: response
         )
+      elsif response.include?('camera error')
+        render json: response
+        return
       elsif response.include?('expired')
         message = @client.messages.create(
           from: '+14152124906',
@@ -43,6 +46,6 @@ class SmsController < ApplicationController
       end
       puts message.sid
     end
-    render json: params
+    render json: response
   end
 end
