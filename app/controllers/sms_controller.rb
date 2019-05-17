@@ -1,6 +1,7 @@
 class SmsController < ApplicationController
   def create
     from = params["From"]
+    to = params["To"]
 
     require 'rubygems'
     require 'twilio-ruby'
@@ -13,40 +14,51 @@ class SmsController < ApplicationController
       @client = Twilio::REST::Client.new(account_sid, auth_token)
 
       message = @client.messages.create(
-        from: '+14152124906',
+        from: to,
         to: from,
         body: "Thank you for using FLASH!  I'll be sending your picture soon.",
       )
 
-      response = Net::HTTP.get('flash-chateau.ngrok.io', '/')
+      camera = Camera.find_by_phone_number(to) || Camera.find_by_phone_number('+1' + to)
 
-      if response.index('http') == 0
-        message = @client.messages.create(
-          from: '+14152124906',
-          to: from,
-          media_url: response
-        )
-      elsif response.include?('camera error')
-        message = @client.messages.create(
-          from: '+14152124906',
-          to: from,
-          body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
-        )
-        puts 'CAMERA ERROR'
-      elsif response.include?('expired')
-        message = @client.messages.create(
-          from: '+14152124906',
-          to: from,
-          body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
-        )
-        puts 'EXPIRATION ERROR'
+      if camera
+        response = Net::HTTP.get(camera.tunnel_url, '/')
+
+        if response.index('http') == 0
+          message = @client.messages.create(
+            from: to,
+            to: from,
+            media_url: response
+          )
+        elsif response.include?('camera error')
+          message = @client.messages.create(
+            from: to,
+            to: from,
+            body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
+          )
+          puts 'CAMERA ERROR'
+        elsif response.include?('expired')
+          message = @client.messages.create(
+            from: to,
+            to: from,
+            body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
+          )
+          puts 'EXPIRATION ERROR'
+        else
+          message = @client.messages.create(
+            from: to,
+            to: from,
+            body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
+          )
+          puts 'UNKNOWN ERROR'
+        end
       else
         message = @client.messages.create(
-          from: '+14152124906',
+          from: to,
           to: from,
           body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
         )
-        puts 'UNKNOWN ERROR'
+        puts 'CAMERA_NOT_FOUND ERROR'
       end
       puts message.sid
     end
