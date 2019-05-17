@@ -1,7 +1,7 @@
 class SmsController < ApplicationController
   def create
-    from = params["From"]
-    to = params["To"]
+    from = params['From']
+    to = params['To']
 
     require 'rubygems'
     require 'twilio-ruby'
@@ -13,11 +13,7 @@ class SmsController < ApplicationController
       auth_token = ENV['TWILIO_TOKEN']
       @client = Twilio::REST::Client.new(account_sid, auth_token)
 
-      message = @client.messages.create(
-        from: to,
-        to: from,
-        body: "Thank you for using FLASH!  I'll be sending your picture soon.",
-      )
+      send_intro_text
 
       camera = Camera.find_by_phone_number(to) || Camera.find_by_phone_number('+1' + to)
 
@@ -31,37 +27,36 @@ class SmsController < ApplicationController
             media_url: response
           )
         elsif response.include?('camera error')
-          message = @client.messages.create(
-            from: to,
-            to: from,
-            body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
-          )
+          message = send_error_text
           puts 'CAMERA ERROR'
         elsif response.include?('expired')
-          message = @client.messages.create(
-            from: to,
-            to: from,
-            body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
-          )
+          message = send_error_text
           puts 'EXPIRATION ERROR'
         else
-          message = @client.messages.create(
-            from: to,
-            to: from,
-            body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
-          )
+          message = send_error_text
           puts 'UNKNOWN ERROR'
         end
       else
-        message = @client.messages.create(
-          from: to,
-          to: from,
-          body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
-        )
+        message = send_error_text
         puts 'CAMERA_NOT_FOUND ERROR'
       end
       puts message.sid
     end
     render json: response
+  end
+  def send_intro_text
+    @client.messages.create(
+      from: params['To'],
+      to: params['From'],
+      body: "Thank you for using FLASH!  I'll be sending your picture soon.",
+    )
+  end
+
+  def send_error_text
+    @client.messages.create(
+      from: params['To'],
+      to: params['From'],
+      body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
+    )
   end
 end
