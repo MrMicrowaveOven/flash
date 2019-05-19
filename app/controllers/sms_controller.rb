@@ -42,7 +42,7 @@ class SmsController < ApplicationController
       end
       puts message.sid
     end
-    render text: '<Response></Response>', content_type: 'application/xml'
+    render xml: '<Response></Response>'
   end
   def send_intro_text
     @client.messages.create(
