@@ -29,12 +29,15 @@ class SmsController < ApplicationController
         elsif response.include?('CAMERA ERROR')
           message = send_error_text
           puts 'CAMERA ERROR'
+          puts response
         elsif response.include?('EXPIRED')
           message = send_error_text
           puts 'EXPIRATION ERROR'
+          puts response
         else
           message = send_error_text
           puts 'UNKNOWN ERROR'
+          puts response
         end
       else
         message = send_error_text
