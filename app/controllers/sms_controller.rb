@@ -26,10 +26,10 @@ class SmsController < ApplicationController
             to: from,
             media_url: response
           )
-        elsif response.include?('camera error')
+        elsif response.include?('CAMERA ERROR')
           message = send_error_text
           puts 'CAMERA ERROR'
-        elsif response.include?('expired')
+        elsif response.include?('EXPIRED')
           message = send_error_text
           puts 'EXPIRATION ERROR'
         else
