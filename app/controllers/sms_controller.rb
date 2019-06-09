@@ -3,6 +3,9 @@ class SmsController < ApplicationController
     from = params['From']
     to = params['To']
 
+    p "----------"
+    p params
+
     require 'rubygems'
     require 'twilio-ruby'
 
