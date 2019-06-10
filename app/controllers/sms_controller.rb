@@ -42,7 +42,7 @@ class SmsController < ApplicationController
           puts response
         end
       else
-        message = send_error_text
+        message = send_camera_not_found_text
         puts 'CAMERA_NOT_FOUND ERROR'
       end
       puts message.sid
@@ -54,6 +54,15 @@ class SmsController < ApplicationController
       from: params['To'],
       to: params['From'],
       body: "Thank you for using FLASH!  I'll be sending your picture soon.",
+    )
+  end
+
+  def send_camera_not_found_text
+    camera_list = Camera.pluck(:id).sort.to_sentence
+    @client.messages.create(
+      from: params['To'],
+      to: params['From'],
+      body: "Sorry, I didn't find a camera with that ID.  I have cameras #{camera_list}.  Which would you like?",
     )
   end
 
