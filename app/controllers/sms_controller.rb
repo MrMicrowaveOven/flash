@@ -2,9 +2,7 @@ class SmsController < ApplicationController
   def create
     from = params['From']
     to = params['To']
-
-    p "----------"
-    p params
+    body = params['Body']
 
     require 'rubygems'
     require 'twilio-ruby'
@@ -18,7 +16,8 @@ class SmsController < ApplicationController
 
       send_intro_text
 
-      camera = Camera.find_by_phone_number(to) || Camera.find_by_phone_number('+1' + to)
+      id_in_body = body.scan(/\d/).join.to_i
+      camera = Camera.find_by_id(body)
 
       if camera
         response = Net::HTTP.get(camera.tunnel_url, '/')
