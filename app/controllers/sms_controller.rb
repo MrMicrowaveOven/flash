@@ -17,7 +17,7 @@ class SmsController < ApplicationController
       send_intro_text
 
       id_in_body = body.scan(/\d/).join.to_i
-      camera = Camera.find_by_id(body)
+      camera = Camera.find_by_id(id_in_body)
 
       if camera
         response = Net::HTTP.get(camera.tunnel_url, '/')
