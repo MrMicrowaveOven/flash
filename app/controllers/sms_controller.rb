@@ -36,6 +36,10 @@ class SmsController < ApplicationController
           message = send_error_text
           puts 'EXPIRATION ERROR'
           puts response
+        elsif response == ''
+          message = send_error_text
+          puts 'CAMERA NOT TRANSMITTING ERROR'
+          puts response
         else
           message = send_error_text
           puts 'UNKNOWN ERROR'
