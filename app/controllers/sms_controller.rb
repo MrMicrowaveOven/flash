@@ -20,30 +20,36 @@ class SmsController < ApplicationController
       camera = Camera.find_by_id(id_in_body)
 
       if camera
-        response = Net::HTTP.get(camera.tunnel_url, '/')
-
-        if response.index('http') == 0
-          message = @client.messages.create(
-            from: to,
-            to: from,
-            media_url: response
-          )
-        elsif response.include?('CAMERA ERROR')
+        begin
+          response = Net::HTTP.get(camera.tunnel_url, '/')
+        rescue StandardError => e
           message = send_error_text
-          puts 'CAMERA ERROR'
-          puts response
-        elsif response.include?('EXPIRED')
-          message = send_error_text
-          puts 'EXPIRATION ERROR'
-          puts response
-        elsif response == ''
-          message = send_error_text
-          puts 'CAMERA NOT TRANSMITTING ERROR'
-          puts response
+          puts 'HTTP RESPONSE TIMEOUT ERROR'
+          puts e
         else
-          message = send_error_text
-          puts 'UNKNOWN ERROR'
-          puts response
+          if response.index('http') == 0
+            message = @client.messages.create(
+              from: to,
+              to: from,
+              media_url: response
+            )
+          elsif response.include?('CAMERA ERROR')
+            message = send_error_text
+            puts 'CAMERA ERROR'
+            puts response
+          elsif response.include?('EXPIRED')
+            message = send_error_text
+            puts 'EXPIRATION ERROR'
+            puts response
+          elsif response == ''
+            message = send_error_text
+            puts 'CAMERA NOT TRANSMITTING ERROR'
+            puts response
+          else
+            message = send_error_text
+            puts 'UNKNOWN ERROR'
+            puts response
+          end
         end
       else
         message = send_camera_not_found_text

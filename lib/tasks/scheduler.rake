@@ -1,5 +1,6 @@
 desc "Test all cameras, sms response"
 task :camera_test => :environment do
+  p 'Beginning camera test'
   require 'rubygems'
   require 'twilio-ruby'
 
@@ -10,6 +11,7 @@ task :camera_test => :environment do
   @client = Twilio::REST::Client.new(account_sid, auth_token)
 
   Camera.find_each do |camera|
+    p "Testing Camera ##{camera.id}"
     response = Net::HTTP.get(camera.tunnel_url, '/')
     p "Camera ##{camera.id}"
     p response
