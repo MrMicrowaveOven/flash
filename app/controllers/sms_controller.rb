@@ -4,7 +4,7 @@ class SmsController < ApplicationController
     to = params['To']
     body = params['Body']
 
-    if body == 'camera_test'
+    if body.downcase.strip == 'camera_test'
       Camera.camera_test
       return
     end
