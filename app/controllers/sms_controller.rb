@@ -24,7 +24,7 @@ class SmsController < ApplicationController
           response = Net::HTTP.get(camera.tunnel_url, '/')
         rescue StandardError => e
           message = send_error_text
-          puts 'HTTP RESPONSE TIMEOUT ERROR'
+          puts 'HTTP RESPONSE TIMEOUT ERROR, SERVEO IS DOWN'
           puts e
         else
           if response.index('http') == 0
