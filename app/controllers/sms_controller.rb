@@ -4,6 +4,11 @@ class SmsController < ApplicationController
     to = params['To']
     body = params['Body']
 
+    if body == 'camera_test'
+      Camera.camera_test
+      return
+    end
+
     require 'rubygems'
     require 'twilio-ruby'
 
