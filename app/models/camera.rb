@@ -21,7 +21,7 @@ class Camera < ApplicationRecord
         to: '+17148099426',
         body: "Camera ##{camera.id}: #{response.slice(0, 10)}"
       )
-      sleep 10
+      # sleep 10
     end
   end
 end
