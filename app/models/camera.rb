@@ -1,4 +1,5 @@
 class Camera < ApplicationRecord
+  has_many :pictures
   default_scope { order(:created_at) }
   def self.camera_test
     p 'Beginning camera test'
