@@ -38,6 +38,7 @@ class SmsController < ApplicationController
               to: from,
               media_url: response
             )
+            Picture.create(camera: camera, phone_number: from, photo_url: response)
           elsif response.include?('CAMERA ERROR')
             message = send_error_text
             puts 'CAMERA ERROR'
