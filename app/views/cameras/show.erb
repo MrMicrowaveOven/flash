@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <h1>Camera #<%= @camera.id %></h1>
+    <% @pictures.each do |picture| %>
+      <%= image_tag(picture.photo_url) %>
+    <% end %>
+  </body>
+</html>

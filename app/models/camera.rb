@@ -27,12 +27,6 @@ class Camera < ApplicationRecord
         else
           p "Camera ##{camera.id} is still active"
         end
-        # p response
-        # p @client.messages.create(
-        #   from: '+14152124906',
-        #   to: '+17148099426',
-        #   body: "Camera ##{camera.id} is working."
-        # )
       else
         if camera.active
           camera.update(active: false)
@@ -45,13 +39,6 @@ class Camera < ApplicationRecord
           p "Camera ##{camera.id} is still inactive"
         end
       end
-      # Old camera test
-      # p response
-      # p @client.messages.create(
-      #   from: '+14152124906',
-      #   to: '+17148099426',
-      #   body: "Camera ##{camera.id}: #{response.slice(0, 10)}"
-      # )
     end
   end
 end
