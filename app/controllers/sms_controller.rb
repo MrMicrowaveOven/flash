@@ -28,7 +28,7 @@ class SmsController < ApplicationController
         begin
           response = Net::HTTP.get(camera.tunnel_url, '/')
         rescue StandardError => e
-          message = send_error_text
+          message = send_error_text(id_in_body)
           puts 'HTTP RESPONSE TIMEOUT ERROR, SERVEO IS DOWN'
           puts e
         else
@@ -40,19 +40,19 @@ class SmsController < ApplicationController
             )
             Picture.create(camera: camera, phone_number: from, photo_url: response)
           elsif response.include?('CAMERA ERROR')
-            message = send_error_text
+            message = send_error_text(id_in_body)
             puts 'CAMERA ERROR'
             puts response
           elsif response.include?('EXPIRED')
-            message = send_error_text
+            message = send_error_text(id_in_body)
             puts 'EXPIRATION ERROR'
             puts response
           elsif response == ''
-            message = send_error_text
+            message = send_error_text(id_in_body)
             puts 'CAMERA NOT TRANSMITTING ERROR'
             puts response
           else
-            message = send_error_text
+            message = send_error_text(id_in_body)
             puts 'UNKNOWN ERROR'
             puts response
           end
@@ -82,11 +82,11 @@ class SmsController < ApplicationController
     )
   end
 
-  def send_error_text
+  def send_error_text(id)
     @client.messages.create(
       from: params['To'],
       to: params['From'],
-      body: 'Apologies, this flash-cam is currently out of service.  Please try again later.'
+      body: "Apologies, Flash-Cam ##{id} is currently out of service.  Please try again later."
     )
   end
 end
