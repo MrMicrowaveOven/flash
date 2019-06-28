@@ -13,7 +13,6 @@ class Camera < ApplicationRecord
 
   def self.camera_test
     p 'Beginning camera test'
-
     Camera.find_each do |camera|
       p "Testing Camera ##{camera.id}"
       begin

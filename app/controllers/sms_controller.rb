@@ -1,18 +1,11 @@
 class SmsController < ApplicationController
   def create
+    require 'twilio-ruby'
+    require 'net/http'
+
     from = params['From']
     to = params['To']
     body = params['Body']
-
-    if body.downcase.strip == 'camera_test'
-      Camera.camera_test
-      return
-    end
-
-    require 'rubygems'
-    require 'twilio-ruby'
-
-    require 'net/http'
 
     if from
       account_sid = ENV['TWILIO_SID']
@@ -26,7 +19,7 @@ class SmsController < ApplicationController
 
       if camera
         begin
-          response = Net::HTTP.get(camera.tunnel_url, '/')
+          response = camera.ping_camera
         rescue StandardError => e
           message = send_error_text(id_in_body)
           puts 'HTTP RESPONSE TIMEOUT ERROR, SERVEO IS DOWN'
@@ -39,21 +32,9 @@ class SmsController < ApplicationController
               media_url: response
             )
             Picture.create(camera: camera, phone_number: from, photo_url: response)
-          elsif response.include?('CAMERA ERROR')
-            message = send_error_text(id_in_body)
-            puts 'CAMERA ERROR'
-            puts response
-          elsif response.include?('EXPIRED')
-            message = send_error_text(id_in_body)
-            puts 'EXPIRATION ERROR'
-            puts response
-          elsif response == ''
-            message = send_error_text(id_in_body)
-            puts 'CAMERA NOT TRANSMITTING ERROR'
-            puts response
           else
             message = send_error_text(id_in_body)
-            puts 'UNKNOWN ERROR'
+            puts response_text(response)
             puts response
           end
         end
@@ -65,6 +46,19 @@ class SmsController < ApplicationController
     end
     render xml: '<Response></Response>'
   end
+
+  def response_text(response)
+    if response.include?('CAMERA ERROR')
+      'CAMERA ERROR'
+    elsif response.include?('EXPIRED')
+      'EXPIRATION ERROR'
+    elsif response == ''
+      'CAMERA NOT TRANSMITTING ERROR'
+    else
+      'UNKNOWN ERROR'
+    end
+  end
+
   def send_intro_text
     @client.messages.create(
       from: params['To'],
