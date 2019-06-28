@@ -17,16 +17,20 @@ class Camera < ApplicationRecord
     Camera.find_each do |camera|
       p "Testing Camera ##{camera.id}"
       begin
-        response = camera.test_camera
+        response = camera.ping_camera
       rescue
         camera.set_as_inactive_and_report
       end
       p "Camera ##{camera.id}"
-      if response.index('https://s3') == 0
-        camera.active_procedure
-      else
-        camera.inactive_procedure
-      end
+      camera.handle_response(response)
+    end
+  end
+
+  def handle_response(response)
+    if response.index('https://s3') == 0
+      active_procedure
+    else
+      inactive_procedure
     end
   end
 
@@ -72,7 +76,7 @@ class Camera < ApplicationRecord
     report_inactive
   end
 
-  def test_camera
+  def ping_camera
     Net::HTTP.get(tunnel_url, '/')
   end
 end
