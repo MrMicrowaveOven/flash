@@ -18,7 +18,7 @@ class Camera < ApplicationRecord
       begin
         response = camera.ping_camera
       rescue
-        camera.set_as_inactive_and_report
+        # camera.set_as_inactive_and_report
       end
       p "Camera ##{camera.id}"
       camera.handle_response(response)
