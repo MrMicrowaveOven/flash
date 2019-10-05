@@ -10,6 +10,7 @@ class SmsController < ApplicationController
     if from
       account_sid = ENV['TWILIO_SID']
       auth_token = ENV['TWILIO_TOKEN']
+      raise 'No Twilio environment variables were found' unless account_sid and auth_token
       @client = Twilio::REST::Client.new(account_sid, auth_token)
 
       send_intro_text
