@@ -6,6 +6,6 @@ class CamerasController < ApplicationController
 
   def update
     Camera.find_by_id(params['id']).update!(tunnel_url: params['url'])
-    render json: {code: 200}
+    render json: { code: 200, id: params['id'], tunnel_url: params['url'] }
   end
 end
