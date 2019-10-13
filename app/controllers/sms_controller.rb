@@ -1,15 +1,16 @@
 class SmsController < ApplicationController
+
+  XML_RESPONSE = '<Response></Response>'
+
   def create
     require 'twilio-ruby'
     require 'net/http'
 
-    from = params['From']
-    to = params['To']
-    body = params['Body']
+    from, to, body = params['From'], params['To'], params['Body']
 
     if from
-      account_sid = ENV['TWILIO_SID']
-      auth_token = ENV['TWILIO_TOKEN']
+      account_sid, auth_token = ENV['TWILIO_SID'], ENV['TWILIO_TOKEN']
+
       raise 'No Twilio environment variables were found' unless account_sid and auth_token
       @client = Twilio::REST::Client.new(account_sid, auth_token)
 
@@ -27,11 +28,7 @@ class SmsController < ApplicationController
           puts e
         else
           if response.index('http') == 0
-            message = @client.messages.create(
-              from: to,
-              to: from,
-              media_url: response
-            )
+            message = send_picture_text(response)
             Picture.create(camera: camera, phone_number: from, photo_url: response)
           else
             message = send_error_text(id_in_body)
@@ -45,7 +42,7 @@ class SmsController < ApplicationController
       end
       puts message.sid
     end
-    render xml: '<Response></Response>'
+    render xml: XML_RESPONSE
   end
 
   def response_text(response)
@@ -58,6 +55,14 @@ class SmsController < ApplicationController
     else
       'UNKNOWN ERROR'
     end
+  end
+
+  def send_picture_text(picture_url)
+    @client.messages.create(
+      from: params['To'],
+      to: params['From'],
+      media_url: picture_url
+    )
   end
 
   def send_intro_text
