@@ -11,6 +11,25 @@ class Camera < ApplicationRecord
   auth_token = ENV['TWILIO_TOKEN']
   CLIENT = Twilio::REST::Client.new(account_sid, auth_token)
 
+  include ActiveModel::Dirty
+
+  before_save :inform_camera_owners_of_change
+
+  def inform_camera_owners_of_change
+    if contact_number_previous_change
+      old_number = contact_number_previous_change[0]
+      new_number = contact_number_previous_change[1]
+
+      [old_number, new_number].each do |number|
+        p CLIENT.messages.create(
+          from: '+14152124906',
+          to: number,
+          body: "Flash-Cam ##{id} has changed its contact number from #{old_number} to #{new_number}"
+        )
+      end
+    end
+  end
+
   def self.camera_test
     p 'Beginning camera test'
     Camera.find_each do |camera|
