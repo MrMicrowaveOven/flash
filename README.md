@@ -16,13 +16,15 @@
 
 Create SMS
 - Call from User
+- Responds intro text
+- Creates picture, marked sent: false, photo_url nil
 
 Index Picture
 - Shows all pictures of camera
 
 Show Camera
 - Heartbeat call from Device
-- Responds True or False
+- Responds True or False, with picture_id
 
 Update Picture
 - Photo send from Device

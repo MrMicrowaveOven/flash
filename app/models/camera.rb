@@ -15,9 +15,6 @@ class Camera < ApplicationRecord
 
   before_save :inform_camera_owners_of_change
 
-  def picture_needed?
-  end
-
   def inform_camera_owners_of_change
     if contact_number_previous_change
       old_number = contact_number_previous_change[0]
