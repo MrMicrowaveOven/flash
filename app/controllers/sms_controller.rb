@@ -75,10 +75,15 @@ class SmsController < ApplicationController
 
   def send_camera_not_found_text
     camera_list = Camera.pluck(:id).sort.to_sentence
+    camera_sentence = if camera_list.empty?
+                        'Sorry, I currently do not have any cameras online.'
+                      else
+                        "Sorry, I didn't find a camera with that ID.  I currently have cameras #{camera_list} online.  Which would you like?"
+                      end
     @client.messages.create(
       from: params['To'],
       to: params['From'],
-      body: "Sorry, I didn't find a camera with that ID.  I have cameras #{camera_list}.  Which would you like?",
+      body: camera_sentence,
     )
   end
 
