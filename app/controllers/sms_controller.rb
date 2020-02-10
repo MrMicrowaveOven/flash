@@ -19,8 +19,11 @@ class SmsController < ApplicationController
       id_in_body = body.scan(/\d/).join.to_i
       camera = Camera.find_by_id(id_in_body)
 
-      if camera
+      if camera&.active
         camera.pictures.create(phone_number: from)
+      else
+        message = send_camera_not_found_text
+        puts 'CAMERA_NOT_FOUND ERROR'
       end
     end
     render xml: XML_RESPONSE
@@ -55,11 +58,17 @@ class SmsController < ApplicationController
   end
 
   def send_camera_not_found_text
-    camera_list = Camera.pluck(:id).sort.to_sentence
+    cameras = Camera.where(active: true).pluck(:id).sort
+    camera_list = cameras.to_sentence
+    camera_sentence = if camera_list.empty?
+                        'Sorry, I currently do not have any cameras online.'
+                      else
+                        "Sorry, I didn't find a camera with that ID.  I currently have camera#{'s' if cameras.length > 1} #{camera_list} online.  Which would you like?"
+                      end
     @client.messages.create(
       from: params['To'],
       to: params['From'],
-      body: "Sorry, I didn't find a camera with that ID.  I have cameras #{camera_list}.  Which would you like?",
+      body: camera_sentence,
     )
   end
 
