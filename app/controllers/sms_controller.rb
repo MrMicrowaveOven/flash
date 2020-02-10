@@ -20,27 +20,11 @@ class SmsController < ApplicationController
       camera = Camera.find_by_id(id_in_body)
 
       if camera&.active
-        begin
-          response = camera.ping_camera
-        rescue StandardError => e
-          message = send_error_text(id_in_body)
-          puts 'HTTP RESPONSE TIMEOUT ERROR, SERVEO IS DOWN'
-          puts e
-        else
-          if response.index('http') == 0
-            message = send_picture_text(response)
-            Picture.create(camera: camera, phone_number: from, photo_url: response)
-          else
-            message = send_error_text(id_in_body)
-            puts response_text(response)
-            puts response
-          end
-        end
+        camera.pictures.create(phone_number: from)
       else
         message = send_camera_not_found_text
         puts 'CAMERA_NOT_FOUND ERROR'
       end
-      puts message.sid
     end
     render xml: XML_RESPONSE
   end
