@@ -15,7 +15,7 @@ class Picture < ApplicationRecord
         to: phone_number,
         media_url: photo_url
       )
-      update(sent_to_user: true)
+      update!(sent_to_user: true)
     elsif !phone_number && !photo_url
       puts "No phone number or photo_url"
     elsif !phone_number
