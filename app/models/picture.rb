@@ -10,12 +10,12 @@ class Picture < ApplicationRecord
       raise 'No Twilio environment variables were found' unless account_sid and auth_token
 
       client = Twilio::REST::Client.new(account_sid, auth_token)
+      update!(sent_to_user: true)
       client.messages.create(
         from: '+14152124906',
         to: phone_number,
         media_url: photo_url
       )
-      update!(sent_to_user: true)
     elsif !phone_number && !photo_url
       puts "No phone number or photo_url"
     elsif !phone_number
