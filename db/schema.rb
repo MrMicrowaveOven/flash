@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_09_184206) do
+ActiveRecord::Schema.define(version: 2020_02_13_204848) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,15 +21,15 @@ ActiveRecord::Schema.define(version: 2020_02_09_184206) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "contact_number"
-    t.boolean "active"
+    t.datetime "last_checked_in"
   end
 
   create_table "pictures", force: :cascade do |t|
     t.bigint "camera_id"
     t.string "phone_number"
     t.string "photo_url"
-    t.datetime "created_at", default: "2019-10-09 20:26:06", null: false
-    t.datetime "updated_at", default: "2019-10-09 20:26:06", null: false
+    t.datetime "created_at", default: "2020-02-09 18:24:30", null: false
+    t.datetime "updated_at", default: "2020-02-09 18:24:30", null: false
     t.boolean "sent_to_user", default: false
     t.index ["camera_id"], name: "index_pictures_on_camera_id"
   end
