@@ -19,7 +19,7 @@ class SmsController < ApplicationController
       id_in_body = body.scan(/\d/).join.to_i
       camera = Camera.find_by_id(id_in_body)
 
-      if camera&.active
+      if camera&.active?
         camera.pictures.create(phone_number: from)
       else
         message = send_camera_not_found_text
@@ -58,7 +58,7 @@ class SmsController < ApplicationController
   end
 
   def send_camera_not_found_text
-    cameras = Camera.where(active: true).pluck(:id).sort
+    cameras = Camera.active.pluck(:id).sort
     camera_list = cameras.to_sentence
     camera_sentence = if camera_list.empty?
                         'Sorry, I currently do not have any cameras online.'
