@@ -10,18 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_13_204848) do
+ActiveRecord::Schema.define(version: 2020_02_17_220918) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "cameras", force: :cascade do |t|
-    t.string "phone_number"
-    t.string "tunnel_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "contact_number"
     t.datetime "last_checked_in", default: "2020-02-17 21:06:09"
+    t.string "mac_address"
   end
 
   create_table "pictures", force: :cascade do |t|
