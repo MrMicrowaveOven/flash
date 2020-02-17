@@ -63,7 +63,7 @@ class SmsController < ApplicationController
     camera_sentence = if camera_list.empty?
                         'Sorry, I currently do not have any cameras online.'
                       else
-                        "Sorry, I didn't find a camera with that ID.  I currently have camera#{'s' if cameras.length > 1} #{camera_list} online.  Which would you like?"
+                        "Sorry, I didn't find a camera with that ID.  I currently have camera#{'s' if cameras.length > 1} #{camera_list} online.#{'  Which would you like?' if cameras.length > 1}"
                       end
     @client.messages.create(
       from: params['To'],
