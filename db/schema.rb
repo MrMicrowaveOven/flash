@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 2020_02_13_204848) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "contact_number"
-    t.datetime "last_checked_in"
+    t.datetime "last_checked_in", default: "2020-02-17 21:06:09"
   end
 
   create_table "pictures", force: :cascade do |t|
