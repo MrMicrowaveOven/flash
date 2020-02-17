@@ -2,7 +2,7 @@
 #
 #                    Prefix Verb  URI Pattern                                                                              Controller#Action
 #                       sms POST  /sms(.:format)                                                                           sms#create
-#                    camera GET   /cameras/:id(.:format)                                                                   cameras#show
+#                   cameras GET   /cameras(.:format)                                                                       cameras#index
 #                  pictures GET   /pictures(.:format)                                                                      pictures#index
 #                   picture PATCH /pictures/:id(.:format)                                                                  pictures#update
 #                           PUT   /pictures/:id(.:format)                                                                  pictures#update
@@ -15,6 +15,6 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   resources :sms, :only => [:create]
-  resources :cameras, :only => [:show]
+  resources :cameras, :only => [:index]
   resources :pictures, :only => [:index, :update]
 end
