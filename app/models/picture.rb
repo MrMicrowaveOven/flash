@@ -27,6 +27,11 @@ class Picture < ApplicationRecord
       client.messages.create(
         from: '+14152124906',
         to: phone_number,
+        body: "Photo from Camera ##{id} incoming..."
+      )
+      client.messages.create(
+        from: '+14152124906',
+        to: phone_number,
         media_url: photo_url
       )
     elsif !phone_number && !photo_url
