@@ -27,7 +27,7 @@ class Picture < ApplicationRecord
       client.messages.create(
         from: '+14152124906',
         to: phone_number,
-        body: "Photo from Camera ##{id} incoming..."
+        body: "Photo from Camera ##{camera_id} incoming..."
       )
       client.messages.create(
         from: '+14152124906',
