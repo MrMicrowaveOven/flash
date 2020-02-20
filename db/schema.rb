@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_17_220918) do
+ActiveRecord::Schema.define(version: 2020_02_20_195155) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,13 @@ ActiveRecord::Schema.define(version: 2020_02_17_220918) do
     t.datetime "updated_at", default: "2020-02-09 18:24:30", null: false
     t.boolean "sent_to_user", default: false
     t.index ["camera_id"], name: "index_pictures_on_camera_id"
+  end
+
+  create_table "unknown_mac_addresses", force: :cascade do |t|
+    t.string "mac_address"
+    t.datetime "last_called"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "pictures", "cameras"
