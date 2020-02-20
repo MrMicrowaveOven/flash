@@ -15,7 +15,22 @@ class UnknownMacAddress < ApplicationRecord
       unknown_mac_address.update(last_called: Time.now)
     else
       UnknownMacAddress.create(mac_address: mac_address, last_called: Time.now)
+      send_new_mac_address_notification
     end
+  end
+
+  def send_new_mac_address_notification
+    require 'twilio-ruby'
+    require 'net/http'
+
+    from, to, body = params['From'], params['To'], params['Body']
+    account_sid, auth_token = ENV['TWILIO_SID'], ENV['TWILIO_TOKEN']
+    @client = Twilio::REST::Client.new(account_sid, auth_token)
+    @client.messages.create(
+      from: '+14152124906',
+      to: Camera.first.contact_number,
+      body: "New mac address detected",
+    )
   end
 
   def resolved?
