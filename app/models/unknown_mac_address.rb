@@ -17,4 +17,8 @@ class UnknownMacAddress < ApplicationRecord
       UnknownMacAddress.create(mac_address: mac_address, last_called: Time.now)
     end
   end
+
+  def resolved?
+    !!Camera.find_by_mac_address(mac_address)
+  end
 end
