@@ -14,20 +14,16 @@ class SmsController < ApplicationController
       raise 'No Twilio environment variables were found' unless account_sid and auth_token
       @client = Twilio::REST::Client.new(account_sid, auth_token)
 
-      if body.downcase.include?('update')
-        send_update_text
+      send_intro_text
+
+      id_in_body = body.scan(/\d/).join.to_i
+      camera = Camera.find_by_id(id_in_body)
+
+      if camera&.active?
+        camera.pictures.create(phone_number: from)
       else
-        send_intro_text
-
-        id_in_body = body.scan(/\d/).join.to_i
-        camera = Camera.find_by_id(id_in_body)
-
-        if camera&.active?
-          camera.pictures.create(phone_number: from)
-        else
-          message = send_camera_not_found_text
-          puts 'CAMERA_NOT_FOUND ERROR'
-        end
+        message = send_camera_not_found_text
+        puts 'CAMERA_NOT_FOUND ERROR'
       end
     end
     render xml: XML_RESPONSE
@@ -50,19 +46,6 @@ class SmsController < ApplicationController
       from: params['To'],
       to: params['From'],
       media_url: picture_url
-    )
-  end
-
-  def send_update_text
-    @client.messages.create(
-      from: params['To'],
-      to: params['From'],
-      body: "Happy to update for you!  Your camera will be updated shortly.",
-    )
-    @client.messages.create(
-      from: params['To'],
-      to: Camera.first.contact_number,
-      body: "Camera seeks update",
     )
   end
 
