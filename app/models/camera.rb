@@ -27,12 +27,43 @@ class Camera < ApplicationRecord
 
   before_save :inform_camera_owners_of_change
 
+  def self.inactivity_check
+    Camera.each do |camera|
+      if camera.last_checked_in < 30.seconds.ago && camera.last_checked_in > 31.seconds.ago
+        camera.inform_camera_owners_of_inactivity
+      end
+    end
+  end
+
+  def activity_check
+    if last_checked_in < 31.seconds.ago
+      inform_camera_owners_of_activity
+    end
+  end
+
   def touch
+    activity_check
     update(last_checked_in: Time.now)
   end
 
   def active?
-    last_checked_in > 5.seconds.ago
+    last_checked_in > 30.seconds.ago
+  end
+
+  def inform_camera_owners_of_activity
+    p CLIENT.messages.create(
+      from: '+14152124906',
+      to: contact_number,
+      body: "Flash-Cam ##{id} has just become active."
+    )
+  end
+
+  def inform_camera_owners_of_inactivity
+    p CLIENT.messages.create(
+      from: '+14152124906',
+      to: contact_number,
+      body: "Flash-Cam ##{id} has been inactive for 30+ seconds."
+    )
   end
 
   def inform_camera_owners_of_change
@@ -49,5 +80,5 @@ class Camera < ApplicationRecord
       end
     end
   end
-  scope :active, lambda { where('last_checked_in > ?', 5.seconds.ago) }
+  scope :active, lambda { where('last_checked_in > ?', 30.seconds.ago) }
 end
