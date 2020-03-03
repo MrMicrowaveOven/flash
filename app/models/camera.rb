@@ -28,7 +28,7 @@ class Camera < ApplicationRecord
   before_save :inform_camera_owners_of_change
 
   def self.inactivity_check
-    Camera.each do |camera|
+    Camera.all.each do |camera|
       if camera.last_checked_in < 30.seconds.ago && camera.last_checked_in > 31.seconds.ago
         camera.inform_camera_owners_of_inactivity
       end
