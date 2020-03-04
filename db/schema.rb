@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_20_195155) do
+ActiveRecord::Schema.define(version: 2020_03_04_032919) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 2020_02_20_195155) do
     t.string "contact_number"
     t.datetime "last_checked_in", default: "2020-02-17 21:06:09"
     t.string "mac_address"
+    t.boolean "active"
   end
 
   create_table "pictures", force: :cascade do |t|
