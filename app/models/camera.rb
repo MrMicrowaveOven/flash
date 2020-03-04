@@ -28,15 +28,27 @@ class Camera < ApplicationRecord
   before_save :inform_camera_owners_of_change
 
   def self.inactivity_check
-    Camera.all.each do |camera|
-      if camera.last_checked_in < 30.seconds.ago && camera.last_checked_in > 31.seconds.ago
-        camera.inform_camera_owners_of_inactivity
-      end
+    Camera.active.has_not_recently_checked_in.all.each do |camera|
+      camera.mark_inactive
+      camera.inform_camera_owners_of_inactivity
     end
   end
 
+  def mark_active
+    update!(active: true)
+  end
+
+  def mark_inactive
+    update!(active: false)
+  end
+
+  def inactive
+    !active
+  end
+
   def activity_check
-    if last_checked_in < 31.seconds.ago
+    if inactive
+      mark_active
       inform_camera_owners_of_activity
     end
   end
@@ -44,10 +56,6 @@ class Camera < ApplicationRecord
   def touch
     activity_check
     update(last_checked_in: Time.now)
-  end
-
-  def active?
-    last_checked_in > 30.seconds.ago
   end
 
   def inform_camera_owners_of_activity
@@ -80,5 +88,6 @@ class Camera < ApplicationRecord
       end
     end
   end
-  scope :active, lambda { where('last_checked_in > ?', 30.seconds.ago) }
+  scope :has_not_recently_checked_in, lambda { where('last_checked_in < ?', 30.seconds.ago)}
+  scope :active, lambda { where(active: true) }
 end
