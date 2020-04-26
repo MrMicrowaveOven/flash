@@ -23,6 +23,8 @@ class Camera < ApplicationRecord
   auth_token = ENV['TWILIO_TOKEN']
   CLIENT = Twilio::REST::Client.new(account_sid, auth_token)
 
+  SECONDS_TO_TIMEOUT = 15
+
   include ActiveModel::Dirty
 
   before_save :inform_camera_owners_of_change
@@ -32,7 +34,7 @@ class Camera < ApplicationRecord
   end
 
   def active?
-    last_checked_in > 5.seconds.ago
+    last_checked_in > SECONDS_TO_TIMEOUT.seconds.ago
   end
 
   def inform_camera_owners_of_change
@@ -49,5 +51,5 @@ class Camera < ApplicationRecord
       end
     end
   end
-  scope :active, lambda { where('last_checked_in > ?', 5.seconds.ago) }
+  scope :active, lambda { where('last_checked_in > ?', SECONDS_TO_TIMEOUT.seconds.ago) }
 end
